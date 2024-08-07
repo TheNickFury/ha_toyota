@@ -227,85 +227,87 @@ async def async_setup_entry(
 ) -> None:
     """Set up the binary sensor platform."""
     coordinator: DataUpdateCoordinator[list[VehicleData]] = hass.data[DOMAIN][entry.entry_id]
-
+    print("Coordinator ", coordinator)
     binary_sensors: list[ToyotaBinarySensor] = []
-    for index, _ in enumerate(coordinator.data):
-        vehicle = coordinator.data[index]["data"]
-        capabilities_descriptions = [
-            (
-                vehicle._vehicle_info.extended_capabilities.bonnet_status,
-                HOOD_STATUS_ENTITY_DESCRIPTION,
-            ),
-            (
-                vehicle._vehicle_info.extended_capabilities.front_driver_door_lock_status,
-                FRONT_DRIVER_DOOR_LOCK_STATUS_ENTITY_DESCRIPTION,
-            ),
-            (
-                vehicle._vehicle_info.extended_capabilities.front_driver_door_open_status,
-                FRONT_DRIVER_DOOR_OPEN_STATUS_ENTITY_DESCRIPTION,
-            ),
-            (
-                vehicle._vehicle_info.extended_capabilities.front_driver_door_window_status,
-                FRONT_DRIVER_DOOR_WINDOW_STATUS_ENTITY_DESCRIPTION,
-            ),
-            (
-                vehicle._vehicle_info.extended_capabilities.front_passenger_door_lock_status,
-                FRONT_PASSENGER_DOOR_LOCK_STATUS_ENTITY_DESCRIPTION,
-            ),
-            (
-                vehicle._vehicle_info.extended_capabilities.front_passenger_door_open_status,
-                FRONT_PASSENGER_DOOR_OPEN_STATUS_ENTITY_DESCRIPTION,
-            ),
-            (
-                vehicle._vehicle_info.extended_capabilities.front_passenger_door_window_status,
-                FRONT_PASSENGER_DOOR_WINDOW_STATUS_ENTITY_DESCRIPTION,
-            ),
-            (
-                vehicle._vehicle_info.extended_capabilities.rear_driver_door_lock_status,
-                REAR_DRIVER_DOOR_LOCK_STATUS_ENTITY_DESCRIPTION,
-            ),
-            (
-                vehicle._vehicle_info.extended_capabilities.rear_driver_door_open_status,
-                REAR_DRIVER_DOOR_OPEN_STATUS_ENTITY_DESCRIPTION,
-            ),
-            (
-                vehicle._vehicle_info.extended_capabilities.rear_driver_door_window_status,
-                REAR_DRIVER_DOOR_WINDOW_STATUS_ENTITY_DESCRIPTION,
-            ),
-            (
-                vehicle._vehicle_info.extended_capabilities.rear_passenger_door_lock_status,
-                REAR_PASSENGER_DOOR_LOCK_STATUS_ENTITY_DESCRIPTION,
-            ),
-            (
-                vehicle._vehicle_info.extended_capabilities.rear_passenger_door_open_status,
-                REAR_PASSENGER_DOOR_OPEN_STATUS_ENTITY_DESCRIPTION,
-            ),
-            (
-                vehicle._vehicle_info.extended_capabilities.rear_passenger_door_window_status,
-                REAR_PASSENGER_DOOR_WINDOW_STATUS_ENTITY_DESCRIPTION,
-            ),
-            # TODO: Find correct matching capabilities in _vehicle_info
-            (
-                vehicle._vehicle_info.extended_capabilities.bonnet_status,
-                TRUNK_DOOR_LOCK_ENTITY_DESCRIPTION,
-            ),
-            # TODO: Find correct matching capabilities in _vehicle_info
-            (
-                vehicle._vehicle_info.extended_capabilities.bonnet_status,
-                TRUNK_DOOR_OPEN_ENTITY_DESCRIPTION,
-            ),
-        ]
+    if coordinator is not None:
+        for index, _ in enumerate(coordinator.data):
+            vehicle = coordinator.data[index]["data"]
+            capabilities_descriptions = [
+                (
+                    vehicle._vehicle_info.extended_capabilities.bonnet_status,
+                    HOOD_STATUS_ENTITY_DESCRIPTION,
+                ),
+                (
+                    vehicle._vehicle_info.extended_capabilities.front_driver_door_lock_status,
+                    FRONT_DRIVER_DOOR_LOCK_STATUS_ENTITY_DESCRIPTION,
+                ),
+                (
+                    vehicle._vehicle_info.extended_capabilities.front_driver_door_open_status,
+                    FRONT_DRIVER_DOOR_OPEN_STATUS_ENTITY_DESCRIPTION,
+                ),
+                (
+                    vehicle._vehicle_info.extended_capabilities.front_driver_door_window_status,
+                    FRONT_DRIVER_DOOR_WINDOW_STATUS_ENTITY_DESCRIPTION,
+                ),
+                (
+                    vehicle._vehicle_info.extended_capabilities.front_passenger_door_lock_status,
+                    FRONT_PASSENGER_DOOR_LOCK_STATUS_ENTITY_DESCRIPTION,
+                ),
+                (
+                    vehicle._vehicle_info.extended_capabilities.front_passenger_door_open_status,
+                    FRONT_PASSENGER_DOOR_OPEN_STATUS_ENTITY_DESCRIPTION,
+                ),
+                (
+                    vehicle._vehicle_info.extended_capabilities.front_passenger_door_window_status,
+                    FRONT_PASSENGER_DOOR_WINDOW_STATUS_ENTITY_DESCRIPTION,
+                ),
+                (
+                    vehicle._vehicle_info.extended_capabilities.rear_driver_door_lock_status,
+                    REAR_DRIVER_DOOR_LOCK_STATUS_ENTITY_DESCRIPTION,
+                ),
+                (
+                    vehicle._vehicle_info.extended_capabilities.rear_driver_door_open_status,
+                    REAR_DRIVER_DOOR_OPEN_STATUS_ENTITY_DESCRIPTION,
+                ),
+                (
+                    vehicle._vehicle_info.extended_capabilities.rear_driver_door_window_status,
+                    REAR_DRIVER_DOOR_WINDOW_STATUS_ENTITY_DESCRIPTION,
+                ),
+                (
+                    vehicle._vehicle_info.extended_capabilities.rear_passenger_door_lock_status,
+                    REAR_PASSENGER_DOOR_LOCK_STATUS_ENTITY_DESCRIPTION,
+                ),
+                (
+                    vehicle._vehicle_info.extended_capabilities.rear_passenger_door_open_status,
+                    REAR_PASSENGER_DOOR_OPEN_STATUS_ENTITY_DESCRIPTION,
+                ),
+                (
+                    vehicle._vehicle_info.extended_capabilities.rear_passenger_door_window_status,
+                    REAR_PASSENGER_DOOR_WINDOW_STATUS_ENTITY_DESCRIPTION,
+                ),
+                # TODO: Find correct matching capabilities in _vehicle_info
+                (
+                    vehicle._vehicle_info.extended_capabilities.bonnet_status,
+                    TRUNK_DOOR_LOCK_ENTITY_DESCRIPTION,
+                ),
+                # TODO: Find correct matching capabilities in _vehicle_info
+                (
+                    vehicle._vehicle_info.extended_capabilities.bonnet_status,
+                    TRUNK_DOOR_OPEN_ENTITY_DESCRIPTION,
+                ),
+            ]
 
-        binary_sensors.extend(
-            ToyotaBinarySensor(
-                coordinator=coordinator,
-                entry_id=entry.entry_id,
-                vehicle_index=index,
-                description=description,
+            binary_sensors.extend(
+                ToyotaBinarySensor(
+                    coordinator=coordinator,
+                    entry_id=entry.entry_id,
+                    vehicle_index=index,
+                    description=description,
+                )
+                for capability, description in capabilities_descriptions
+                if capability
             )
-            for capability, description in capabilities_descriptions
-            if capability
-        )
+
     async_add_devices(binary_sensors, True)
 
 
