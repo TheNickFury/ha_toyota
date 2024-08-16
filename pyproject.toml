@@ -8,8 +8,12 @@ license = "MIT"
 [tool.poetry.dependencies]
 python = "^3.11"
 homeassistant = "^2023.11"
-mytoyota = "^2.1.4"
+mytoyota = {version = "^2.0.5", source = "mytoyota-fury"}
 arrow = "^1.1.1"
+
+[[tool.poetry.source]]
+name = "mytoyota-fury"
+url = "https://github.com/TheNickFury/mytoyota.git"
 
 [tool.poetry.dev-dependencies]
 homeassistant-stubs = "^2023.11"
